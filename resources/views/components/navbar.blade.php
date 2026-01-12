@@ -7,7 +7,7 @@
         </svg>
       </div>
     </div>
-    <img src={{ asset("assets/images/logo_bengkod.svg") }} />
+    <img src={{ asset("images/logo_bengkod.svg") }} />
   </div>
   <div class="navbar-center hidden lg:flex">
     <input  class="input w-72" placeholder="Cari Event..." />

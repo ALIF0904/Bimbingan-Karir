@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kategori;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -15,31 +16,49 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama' => 'required|max:255|unique:kategoris,nama'
-        ]);
+        try {
+            $request->validate([
+                'nama' => 'required|max:255|unique:kategoris,nama'
+            ]);
 
-        Kategori::create(['nama' => $request->nama]);
-        return redirect()->back()->with('success', 'Kategori berhasil ditambahkan.');
+            Kategori::create(['nama' => $request->nama]);
+
+            return redirect()->back()->with('success', 'Kategori berhasil ditambahkan');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menambahkan kategori');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama' => 'required|max:255|unique:kategoris,nama,' . $id
-        ]);
+        try {
+            $request->validate([
+                'nama' => 'required|max:255|unique:kategoris,nama,' . $id
+            ]);
 
-        $category = Kategori::findOrFail($id);
-        $category->update(['nama' => $request->nama]);
+            Kategori::findOrFail($id)->update([
+                'nama' => $request->nama
+            ]);
 
-        return redirect()->back()->with('success', 'Kategori berhasil diperbarui.');
+            return redirect()->back()->with('success', 'Kategori berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui kategori');
+        }
     }
 
     public function destroy($id)
     {
-        $category = Kategori::findOrFail($id);
-        $category->delete();
+        try {
+            Kategori::findOrFail($id)->delete();
 
-        return redirect()->back()->with('success', 'Kategori berhasil dihapus.');
+            // reset AUTO_INCREMENT JIKA TABEL KOSONG
+            if (Kategori::count() == 0) {
+                DB::statement('ALTER TABLE kategoris AUTO_INCREMENT = 1');
+            }
+
+            return redirect()->back()->with('success', 'Kategori berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus kategori');
+        }
     }
 }

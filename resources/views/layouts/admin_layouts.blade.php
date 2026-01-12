@@ -1,39 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    {{-- Title dinamis --}}
+
     <title>@yield('title', 'My Laravel App')</title>
-    
-    {{-- Tailwind + DaisyUI --}}
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+
+    <!-- Tailwind + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    {{-- Optional: Bootstrap CSS --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col">
 
-    <div class="flex flex-grow">
-        {{-- Sidebar --}}
-        @include('components.sidebar')
+<body class="min-h-screen">
 
-        {{-- Konten halaman --}}
-        <div class="flex-grow p-4">
-            @yield('content')
+    <div class="drawer drawer-open">
+        <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+
+        <!-- KONTEN -->
+        <div class="drawer-content flex flex-col">
+            <div class="p-4 flex-grow">
+                @yield('content')
+            </div>
+
+            <footer class="bg-base-200 text-center py-3">
+                © {{ date('Y') }} MyLaravelApp. All rights reserved.
+            </footer>
         </div>
+
+        <!-- SIDEBAR -->
+        @include('components.sidebar')
     </div>
 
-    {{-- Footer --}}
-    <footer class="bg-light text-center py-3 mt-auto">
-        <div class="container">
-            <p>© {{ date('Y') }} MyLaravelApp. All rights reserved.</p>
-        </div>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    {{-- Bootstrap JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: "{{ session('success') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: "{{ session('error') }}"
+        });
+    </script>
+    @endif
+
+    @if($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            html: `{!! implode('<br>', $errors->all()) !!}`
+        });
+    </script>
+    @endif
+
+
+
 </body>
+
 </html>
