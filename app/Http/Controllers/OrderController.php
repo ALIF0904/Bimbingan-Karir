@@ -7,6 +7,7 @@ use App\Models\DetailOrder;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -15,7 +16,7 @@ class OrderController extends Controller
         DB::transaction(function () use ($request) {
 
             $order = Order::create([
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'event_id' => $request->event_id,
                 'order_date' => now(),
                 'total_harga' => 0

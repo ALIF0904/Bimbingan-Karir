@@ -23,7 +23,7 @@
     <!-- tombol jadi BUTTON, bukan submit -->
     <button type="button"
         onclick="konfirmasiSimpan()"
-        class="btn btn-primary">
+        class="btn btn-primary">  <!--Mengurangi bug layout karena CSS custom berlebihan.-->
         Simpan
     </button>
 </form>

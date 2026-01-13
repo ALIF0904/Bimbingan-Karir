@@ -10,7 +10,7 @@
         <button onclick="openForm()" class="btn btn-primary">Tambah Kategori</button>
     </div>
 
-    <table class="table w-full border border-gray-200 rounded-lg">
+    <table class="table w-full border border-gray-200 rounded-lg">  <!--Mengurangi bug layout karena CSS custom berlebihan -->
         <thead>
             <tr class="bg-gray-100 text-center">
                 <th>No</th>
@@ -84,7 +84,7 @@
         const submitBtn = document.getElementById('submitBtn');
 
         const method = form.querySelector('input[name="_method"]');
-        if (method) method.remove();
+        if (method) method.remove(); //Mencegah duplikasi _method saat form dibuka berulang, Menghindari bug request ganda (PUT + POST bersamaan), Menjaga request tetap valid ke controller.
 
         if (id) {
             title.textContent = 'Edit Kategori';
@@ -114,7 +114,7 @@
 
     function hapusKategori(id) {
         Swal.fire({
-            title: 'Yakin?',
+            title: 'Yakin?',                        //Mencegah human error (hapus/tambah data tidak sengaja).
             text: 'Data kategori akan dihapus',
             icon: 'warning',
             showCancelButton: true,

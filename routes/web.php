@@ -35,12 +35,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 // Dashboard Admin
 Route::get('/admin', [DashboardAdminController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->middleware(['auth', 'verified']) //auth memastikan hanya user yang sudah login dapat mengakses admin, verified memastikan email user sudah tervalidasi.
+    ->name('dashboard'); 
 
 // Resource categories (hanya user login)
 Route::middleware('auth')->group(function () {
-    Route::resource('categories', CategoryController::class);
+    Route::resource('categories', CategoryController::class); //Mengurangi duplikasi kode route.
     Route::resource('events', EventController::class);
     Route::resource('transactions', TransactionController::class);
 });

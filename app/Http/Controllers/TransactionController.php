@@ -6,7 +6,7 @@ use App\Models\Order;
 
 class TransactionController extends Controller
 {
-    // INDEX = daftar transaksi
+    // INDEX = Riwayat Pembelian
     public function index()
     {
         $orders = Order::with(['user', 'event'])

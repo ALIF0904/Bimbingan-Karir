@@ -5,7 +5,7 @@
 @section('content')
 <h1 class="text-2xl font-bold mb-4">Edit Kategori</h1>
 
-@if ($errors->any())
+@if ($errors->any())                                             <!--Menghindari data tidak valid masuk database.-->
 <div class="bg-red-100 text-red-800 p-2 mb-4 rounded">
     <ul>
         @foreach ($errors->all() as $error)

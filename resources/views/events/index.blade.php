@@ -73,8 +73,9 @@
                             Lihat Tiket
                         </a>
 
-                        <form action="{{ route('events.destroy', $event->id) }}" method="POST"
-                            onsubmit="return confirm('Yakin ingin menghapus event ini?')">
+                        <form action="{{ route('events.destroy', $event->id) }}"
+                            method="POST"
+                            class="form-delete">
                             @csrf
                             @method('DELETE')
                             <button type="submit"
@@ -146,80 +147,124 @@
 </div>
 
 <script>
-function toDatetimeLocal(value) {
-    // dari "2024-08-15 19:00:00" -> "2024-08-15T19:00"
-    if (!value) return '';
-    return value.replace(' ', 'T').slice(0, 16);
-}
-
-function resetMethodSpoof(form) {
-    const old = form.querySelector('input[name="_method"]');
-    if (old) old.remove();
-}
-
-function openFormFromBtn(btn) {
-    openForm({
-        id: btn.dataset.id,
-        judul: btn.dataset.judul,
-        deskripsi: btn.dataset.deskripsi,
-        tanggal_waktu: btn.dataset.tanggal_waktu,
-        lokasi: btn.dataset.lokasi,
-        kategori_id: btn.dataset.kategori_id,
-        gambar: btn.dataset.gambar,
-    });
-}
-
-function openForm(data = null) {
-    const modal = document.getElementById('modalForm');
-    const form = document.getElementById('eventForm');
-    const title = document.getElementById('formTitle');
-    const submitBtn = document.getElementById('submitBtn');
-
-    const judulInput = document.getElementById('judulInput');
-    const deskripsiInput = document.getElementById('deskripsiInput');
-    const tanggalWaktuInput = document.getElementById('tanggalWaktuInput');
-    const lokasiInput = document.getElementById('lokasiInput');
-    const kategoriIdInput = document.getElementById('kategoriIdInput');
-    const gambarInput = document.getElementById('gambarInput');
-
-    resetMethodSpoof(form);
-
-    if (data && data.id) {
-        // Edit
-        title.textContent = 'Edit Event';
-        form.action = `/events/${data.id}`;
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'PUT';
-        form.appendChild(methodInput);
-        submitBtn.textContent = 'Update';
-
-        judulInput.value = data.judul ?? '';
-        deskripsiInput.value = data.deskripsi ?? '';
-        tanggalWaktuInput.value = toDatetimeLocal(data.tanggal_waktu ?? '');
-        lokasiInput.value = data.lokasi ?? '';
-        kategoriIdInput.value = data.kategori_id ?? '';
-        gambarInput.value = data.gambar ?? '';
-    } else {
-        // Tambah
-        title.textContent = 'Tambah Event';
-        form.action = `/events`;
-        submitBtn.textContent = 'Simpan';
-
-        judulInput.value = '';
-        deskripsiInput.value = '';
-        tanggalWaktuInput.value = '';
-        lokasiInput.value = '';
-        kategoriIdInput.value = '';
-        gambarInput.value = '';
+    function toDatetimeLocal(value) {
+        // dari "2024-08-15 19:00:00" -> "2024-08-15T19:00"
+        if (!value) return '';
+        return value.replace(' ', 'T').slice(0, 16);
     }
 
-    modal.classList.remove('hidden');
-}
+    function resetMethodSpoof(form) {
+        const old = form.querySelector('input[name="_method"]');
+        if (old) old.remove();
+    }
 
-function closeForm() {
-    document.getElementById('modalForm').classList.add('hidden');
-}
+    function openFormFromBtn(btn) {
+        openForm({
+            id: btn.dataset.id,
+            judul: btn.dataset.judul,
+            deskripsi: btn.dataset.deskripsi,
+            tanggal_waktu: btn.dataset.tanggal_waktu,
+            lokasi: btn.dataset.lokasi,
+            kategori_id: btn.dataset.kategori_id,
+            gambar: btn.dataset.gambar,
+        });
+    }
+
+    function openForm(data = null) {
+        const modal = document.getElementById('modalForm');
+        const form = document.getElementById('eventForm');
+        const title = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const judulInput = document.getElementById('judulInput');
+        const deskripsiInput = document.getElementById('deskripsiInput');
+        const tanggalWaktuInput = document.getElementById('tanggalWaktuInput');
+        const lokasiInput = document.getElementById('lokasiInput');
+        const kategoriIdInput = document.getElementById('kategoriIdInput');
+        const gambarInput = document.getElementById('gambarInput');
+
+        resetMethodSpoof(form);
+
+        if (data && data.id) {
+            // Edit
+            title.textContent = 'Edit Event';
+            form.action = `/events/${data.id}`;
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'PUT';
+            form.appendChild(methodInput);
+            submitBtn.textContent = 'Update';
+
+            judulInput.value = data.judul ?? '';
+            deskripsiInput.value = data.deskripsi ?? '';
+            tanggalWaktuInput.value = toDatetimeLocal(data.tanggal_waktu ?? '');
+            lokasiInput.value = data.lokasi ?? '';
+            kategoriIdInput.value = data.kategori_id ?? '';
+            gambarInput.value = data.gambar ?? '';
+        } else {
+            // Tambah
+            title.textContent = 'Tambah Event';
+            form.action = `/events`;
+            submitBtn.textContent = 'Simpan';
+
+            judulInput.value = '';
+            deskripsiInput.value = '';
+            tanggalWaktuInput.value = '';
+            lokasiInput.value = '';
+            kategoriIdInput.value = '';
+            gambarInput.value = '';
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeForm() {
+        document.getElementById('modalForm').classList.add('hidden');
+    }
+
+    // =====================
+    // KONFIRMASI HAPUS
+    // =====================
+    document.querySelectorAll('.form-delete').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Yakin?',
+                text: 'Event ini akan dihapus permanen!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // =====================
+    // KONFIRMASI SIMPAN / UPDATE
+    // =====================
+    document.getElementById('eventForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Simpan data?',
+            text: 'Pastikan data sudah benar',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                e.target.submit();
+            }
+        });
+    });
 </script>
 @endsection

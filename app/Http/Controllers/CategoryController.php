@@ -11,7 +11,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Kategori::all();
-        return view('categories.index', compact('categories'));
+        return view('categories.index', compact('categories')); 
     }
 
     public function store(Request $request)
