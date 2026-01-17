@@ -30,7 +30,7 @@
         <div class="border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
             <div class="w-full aspect-[4/3]">
                 <img
-                    src="{{ asset('storage/konser/' . $event->gambar) }}"
+                    src="{{ asset('storage/' . $event->gambar) }}"
                     alt="{{ $event->judul }}"
                     class="w-full h-full object-cover">
             </div>

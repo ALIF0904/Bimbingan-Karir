@@ -5,90 +5,89 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    // Home: bisa filter berdasarkan kategori
     public function home(Request $request)
     {
         $kategoriId = $request->query('kategori');
         $categories = Kategori::all();
 
         $events = Event::with('kategori')
-            ->when($kategoriId, function ($query) use ($kategoriId) {
-                return $query->where('kategori_id', $kategoriId);
-            })
+            ->when($kategoriId, fn($q) => $q->where('kategori_id', $kategoriId))
             ->get();
 
         return view('home', compact('events', 'categories'));
     }
 
-    // Detail event
     public function show(Event $event)
     {
-        $event->load('kategori');
         return view('events.show', compact('event'));
     }
 
-    // Admin index
     public function index()
     {
-        $events = Event::with('kategori')->get();
-        return view('events.index', compact('events'));
+        return view('events.index', [
+            'events' => Event::with('kategori')->get(),
+            'categories' => Kategori::all()
+        ]);
     }
 
-    // Store event (sesuai seeder)
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
+        $data = $request->validate([
+            'judul' => 'required',
+            'deskripsi' => 'required',
             'tanggal_waktu' => 'required|date',
-            'lokasi' => 'required|string|max:255',
+            'lokasi' => 'required',
             'kategori_id' => 'required|exists:kategoris,id',
-            'gambar' => 'required|string|max:255',
+            'gambar' => 'required|image|max:2048'
         ]);
 
-        $validated['user_id'] = auth()->id() ?? 1;
+        $data['gambar'] = $request->file('gambar')
+            ->store('konser', 'public');
 
-        Event::create($validated);
+        // 🔥 WAJIB TAMBAHKAN INI
+        $data['user_id'] = auth()->id();
+        Event::create($data);
 
-        return redirect()->back()->with('success', 'Event berhasil ditambahkan.');
+        return back()->with('success', 'Event ditambahkan');
     }
 
-
-    // (Opsional) Tampilkan halaman form edit
-    public function edit(Event $event)
-    {
-        $event->load('kategori');
-        $categories = Kategori::all();
-
-        return view('events.edit', compact('event', 'categories'));
-    }
-
-    // Update event
     public function update(Request $request, Event $event)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
+        $data = $request->validate([
+            'judul' => 'required',
+            'deskripsi' => 'required',
             'tanggal_waktu' => 'required|date',
-            'lokasi' => 'required|string|max:255',
+            'lokasi' => 'required',
             'kategori_id' => 'required|exists:kategoris,id',
-            'gambar' => 'required|string|max:255',
+            'gambar' => 'nullable|image|max:2048'
         ]);
 
-        $event->update($validated);
+        if ($request->hasFile('gambar')) {
+            if ($event->gambar && Storage::disk('public')->exists($event->gambar)) {
+                Storage::disk('public')->delete($event->gambar);
+            }
 
-        return redirect()->back()->with('success', 'Event berhasil diperbarui.');
+            $data['gambar'] = $request->file('gambar')
+                ->store('konser', 'public');
+        }
+
+        $event->update($data);
+
+        return back()->with('success', 'Event diperbarui');
     }
 
-    // Hapus event
     public function destroy(Event $event)
     {
+        if ($event->gambar && Storage::disk('public')->exists($event->gambar)) {
+            Storage::disk('public')->delete($event->gambar);
+        }
+
         $event->delete();
 
-        return redirect()->back()->with('success', 'Event berhasil dihapus.');
+        return back()->with('success', 'Event dihapus');
     }
-
 }

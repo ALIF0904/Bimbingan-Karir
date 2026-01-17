@@ -8,32 +8,35 @@
     {{-- Filter kategori --}}
     <div class="flex flex-wrap gap-2 mb-6">
         <a href="{{ route('home') }}">
-            <span
-                class="px-3 py-1 rounded transition
+            <span class="px-3 py-1 rounded transition
                 {{ request('kategori') ? 'bg-gray-200 text-gray-800' : 'bg-blue-500 text-white' }}">
                 Semua
             </span>
         </a>
 
         @foreach($categories as $kategori)
-        <a href="{{ route('home', ['kategori' => $kategori->id]) }}">
-            <span
-                class="px-3 py-1 rounded transition
+            <a href="{{ route('home', ['kategori' => $kategori->id]) }}">
+                <span class="px-3 py-1 rounded transition
                     {{ request('kategori') == $kategori->id
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-200 text-gray-800 hover:bg-gray-300' }}">
-                {{ $kategori->nama }}
-            </span>
-        </a>
+                    {{ $kategori->nama }}
+                </span>
+            </a>
         @endforeach
     </div>
 
     {{-- Grid Event --}}
+    @if($events->count())
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach($events as $event)
         <div class="border rounded-lg shadow hover:shadow-lg transition overflow-hidden bg-white">
+
+            {{-- GAMBAR --}}
             <img
-                src="{{ asset('storage/konser/' . $event->gambar) }}"
+                src="{{ $event->gambar
+                        ? asset('storage/'.$event->gambar)
+                        : asset('images/no-image.png') }}"
                 alt="{{ $event->judul }}"
                 class="w-full h-48 object-cover rounded-t-lg">
 
@@ -59,6 +62,11 @@
         </div>
         @endforeach
     </div>
+    @else
+        <p class="text-gray-500 text-center mt-10">
+            Event belum tersedia.
+        </p>
+    @endif
 
 </div>
 @endsection

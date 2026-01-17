@@ -42,14 +42,15 @@
                         Edit
                     </button>
 
+
                     {{-- Hapus --}}
                     <form action="{{ route('events.tikets.destroy', [$event->id, $tiket->id]) }}"
                         method="POST"
-                        class="form-hapus">
+                        class="form-hapus inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
-                            class="px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded hover:bg-red-700">
+                            class="btn btn-sm bg-red-600 text-white hover:bg-red-700">
                             Hapus
                         </button>
                     </form>

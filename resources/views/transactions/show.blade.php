@@ -23,7 +23,7 @@
             <div class="md:col-span-3 flex flex-col gap-3">
                 @if($order->event && $order->event->gambar)
                     <img
-                        src="{{ asset('storage/konser/' . $order->event->gambar) }}"
+                        src="{{ asset('storage/' . $order->event->gambar) }}"
                         alt="{{ $order->event->judul }}"
                         class="w-48 h-48 object-cover rounded-md">
                 @endif

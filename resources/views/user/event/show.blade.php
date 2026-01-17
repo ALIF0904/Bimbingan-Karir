@@ -3,7 +3,7 @@
 @section('content')
 <h1 class="text-xl font-bold mb-4">{{ $event->judul }}</h1>
 
-<form method="POST" action="{{ route('user.order.store') }}">
+<form method="POST" action="{{ route('user.order.store') }}" id="orderForm">
     @csrf
     <input type="hidden" name="event_id" value="{{ $event->id }}">
 
@@ -46,10 +46,11 @@
     </button>
 </form>
 
-{{-- JS Hitung Total --}}
+{{-- JS --}}
 <script>
     const jumlahInputs = document.querySelectorAll('.jumlah');
     const totalEl = document.getElementById('total');
+    const form = document.getElementById('orderForm');
 
     function hitungTotal() {
         let total = 0;
@@ -66,10 +67,45 @@
         });
 
         totalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
+        return total;
     }
 
     jumlahInputs.forEach(input => {
         input.addEventListener('input', hitungTotal);
+    });
+
+    // ==========================
+    // VALIDASI + KONFIRMASI SUBMIT
+    // ==========================
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const total = hitungTotal();
+
+        // ❌ Belum pilih tiket
+        if (total === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tiket belum dipilih',
+                text: 'Silakan pilih minimal 1 tiket sebelum melanjutkan',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        // ✅ Konfirmasi pembelian
+        Swal.fire({
+            title: 'Konfirmasi Pembelian',
+            html: `<b>Total Bayar:</b> Rp ${total.toLocaleString('id-ID')}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Beli',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     });
 </script>
 @endsection
