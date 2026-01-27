@@ -29,13 +29,9 @@
             <tr class="border-t text-center">
                 <td>{{ $i + 1 }}</td>
                 <td class="font-semibold">{{ $event->judul }}</td>
-                <td class="text-left">
-                    {{ \Illuminate\Support\Str::limit($event->deskripsi, 80) }}
-                </td>
-                <td>
-                    {{ \Carbon\Carbon::parse($event->tanggal_waktu)->format('d M Y H:i') }}
-                </td>
-                <td>{{ $event->lokasi }}</td>
+                <td class="text-left">{{ Str::limit($event->deskripsi, 80) }}</td>
+                <td>{{ \Carbon\Carbon::parse($event->tanggal_waktu)->format('d M Y H:i') }}</td>
+                <td>{{ $event->lokasi->nama_lokasi ?? '-' }}</td>
                 <td>{{ $event->kategori->nama ?? '-' }}</td>
                 <td>
                     <img src="{{ asset('storage/'.$event->gambar) }}"
@@ -51,17 +47,17 @@
                             data-judul="{{ e($event->judul) }}"
                             data-deskripsi="{{ e($event->deskripsi) }}"
                             data-tanggal="{{ $event->tanggal_waktu }}"
-                            data-lokasi="{{ e($event->lokasi) }}"
+                            data-lokasi="{{ $event->lokasi_id }}"
                             data-kategori="{{ $event->kategori_id }}">
                             Edit
                         </button>
 
-                        {{-- KELOLA TIKET --}}
+                         {{-- KELOLA TIKET --}}
                         <a href="{{ route('events.tickets.index', $event->id) }}"
                             class="btn btn-sm btn-secondary">
                             Kelola Tiket
                         </a>
-
+                        
                         {{-- DELETE --}}
                         <form method="POST"
                             action="{{ route('events.destroy', $event->id) }}"
@@ -93,33 +89,34 @@
                 <input type="hidden" id="methodSpoof">
 
                 <div class="mb-3">
-                    <label class="font-semibold">Judul Event</label>
-                    <input type="text" name="judul" id="judulInput"
-                        class="input w-full" required>
+                    <label>Judul</label>
+                    <input type="text" name="judul" id="judulInput" class="input w-full" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="font-semibold">Deskripsi</label>
-                    <textarea name="deskripsi" id="deskripsiInput"
-                        class="textarea w-full" required></textarea>
+                    <label>Deskripsi</label>
+                    <textarea name="deskripsi" id="deskripsiInput" class="textarea w-full" required></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label class="font-semibold">Tanggal & Waktu</label>
+                    <label>Tanggal & Waktu</label>
                     <input type="datetime-local" name="tanggal_waktu"
                         id="tanggalInput" class="input w-full" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="font-semibold">Lokasi</label>
-                    <input type="text" name="lokasi"
-                        id="lokasiInput" class="input w-full" required>
+                    <label>Lokasi</label>
+                    <select name="lokasi_id" id="lokasiInput" class="input w-full" required>
+                        <option value="">-- Pilih Lokasi --</option>
+                        @foreach($lokasis as $lokasi)
+                        <option value="{{ $lokasi->id }}">{{ $lokasi->nama_lokasi }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="font-semibold">Kategori</label>
-                    <select name="kategori_id"
-                        id="kategoriInput" class="input w-full" required>
+                    <label>Kategori</label>
+                    <select name="kategori_id" id="kategoriInput" class="input w-full" required>
                         <option value="">-- Pilih Kategori --</option>
                         @foreach($categories as $cat)
                         <option value="{{ $cat->id }}">{{ $cat->nama }}</option>
@@ -128,15 +125,13 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="font-semibold">Gambar</label>
+                    <label>Gambar</label>
                     <input type="file" name="gambar" class="input w-full">
                 </div>
 
                 <div class="flex justify-end gap-2">
                     <button class="btn btn-primary">Simpan</button>
-                    <button type="button" onclick="closeForm()" class="btn">
-                        Batal
-                    </button>
+                    <button type="button" onclick="closeForm()" class="btn">Batal</button>
                 </div>
             </form>
         </div>
@@ -144,21 +139,14 @@
 
 </div>
 @endsection
+
 @push('scripts')
 <script>
     const modal = document.getElementById('modalForm');
     const form = document.getElementById('eventForm');
-    const formTitle = document.getElementById('formTitle');
-
-    const judulInput = document.getElementById('judulInput');
-    const deskripsiInput = document.getElementById('deskripsiInput');
-    const tanggalInput = document.getElementById('tanggalInput');
-    const lokasiInput = document.getElementById('lokasiInput');
-    const kategoriInput = document.getElementById('kategoriInput');
 
     function openForm() {
         form.action = '/events';
-        formTitle.innerText = 'Tambah Event';
         document.getElementById('methodSpoof')?.remove();
         form.reset();
         modal.classList.remove('hidden');
@@ -168,17 +156,12 @@
         modal.classList.add('hidden');
     }
 
-    // EDIT
     document.querySelectorAll('.btn-edit').forEach(btn => {
         btn.onclick = () => {
             form.action = `/events/${btn.dataset.id}`;
-            formTitle.innerText = 'Edit Event';
-
             document.getElementById('methodSpoof')?.remove();
-            form.insertAdjacentHTML(
-                'beforeend',
-                '<input type="hidden" name="_method" value="PUT" id="methodSpoof">'
-            );
+            form.insertAdjacentHTML('beforeend',
+                '<input type="hidden" name="_method" value="PUT" id="methodSpoof">');
 
             judulInput.value = btn.dataset.judul;
             deskripsiInput.value = btn.dataset.deskripsi;
@@ -188,27 +171,6 @@
 
             modal.classList.remove('hidden');
         };
-    });
-
-    // DELETE CONFIRM
-    document.querySelectorAll('.form-delete').forEach(formDelete => {
-        formDelete.addEventListener('submit', e => {
-            e.preventDefault();
-
-            Swal.fire({
-                title: 'Hapus Event?',
-                text: 'Data tidak bisa dikembalikan',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal'
-            }).then(result => {
-                if (result.isConfirmed) {
-                    formDelete.submit();
-                }
-            });
-        });
     });
 </script>
 @endpush

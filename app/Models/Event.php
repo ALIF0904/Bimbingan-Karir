@@ -14,7 +14,7 @@ class Event extends Model
         'judul',
         'deskripsi',
         'tanggal_waktu',
-        'lokasi',
+        'lokasi_id',
         'kategori_id',
         'gambar',
     ];
@@ -44,4 +44,8 @@ class Event extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function lokasi()
+{
+    return $this->belongsTo(Lokasi::class);
+}
 }

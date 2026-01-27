@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Kategori;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PembeliController extends Controller
@@ -12,19 +13,29 @@ class PembeliController extends Controller
     {
         $query = Event::with('kategori');
 
-        if ($request->kategori) {
+        if ($request->filled('kategori')) {
             $query->where('kategori_id', $request->kategori);
         }
 
-        $events = $query->latest()->get();
-        $kategoris = Kategori::all();
-
-        return view('user.event.index', compact('events', 'kategoris'));
+        return view('user.event.index', [
+            'events'    => $query->latest()->get(),
+            'kategoris' => Kategori::all(),
+        ]);
     }
 
     public function show(Event $event)
     {
-        $event->load('tickets');
-        return view('user.event.show', compact('event'));
+        // WAJIB: eager load relasi yang dipakai di view
+        $event->load(['tickets.typeTiket']);
+
+        // WAJIB: karena view user.event.show menggunakan $payments
+        $payments = Payment::where('is_active', true)
+            ->orderBy('nama')
+            ->get();
+
+        return view('user.event.show', [
+            'event'    => $event,
+            'payments' => $payments,
+        ]);
     }
 }

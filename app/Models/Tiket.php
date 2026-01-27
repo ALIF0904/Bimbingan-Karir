@@ -8,7 +8,7 @@ class Tiket extends Model
 {
     protected $fillable = [
         'event_id',
-        'tipe',
+        'type_tiket_id',    
         'harga',
         'stok',
     ];
@@ -26,6 +26,10 @@ class Tiket extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'detail_orders')->withPivot('jumlah', 'subtotal_harga');
+    }
+    public function typeTiket()
+    {
+        return $this->belongsTo(TypeTiket::class, 'type_tiket_id');
     }
 
     

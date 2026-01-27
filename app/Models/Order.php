@@ -10,6 +10,7 @@ class Order extends Model
     'user_id',
     'event_id',
     'order_date',
+    'payment_id',
     'total_harga',
 ];
 
@@ -37,5 +38,8 @@ class Order extends Model
     {
         return $this->hasMany(DetailOrder::class);
     }
-
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
 }

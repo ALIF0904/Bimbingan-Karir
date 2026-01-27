@@ -11,6 +11,9 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\TypetiketController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\LokasiController;
 
 // Home / landing page menampilkan event
 Route::get('/', [EventController::class, 'home'])->name('home');
@@ -43,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class); //Mengurangi duplikasi kode route.
     Route::resource('events', EventController::class);
     Route::resource('transactions', TransactionController::class);
+    Route::resource('types', TypetiketController::class);
+    Route::resource('payments', PaymentController::class);
+    Route::resource('lokasis', LokasiController::class);
 });
 
 // nested route: tiket milik event tertentu
@@ -59,6 +65,11 @@ Route::delete('events/{event}/tikets/{tiket}', [TicketController::class, 'destro
 //kelola transaksi
 Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
 Route::get('transactions/{order}', [TransactionController::class, 'show'])->name('transactions.show');
+
+//kelola payment
+Route::patch('payments/{payment}/toggle', [PaymentController::class, 'toggle'])
+    ->name('payments.toggle');
+
 
 //login user
 Route::middleware(['auth'])->group(function () {

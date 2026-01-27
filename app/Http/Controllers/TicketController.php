@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
+use App\Models\TypeTiket;
 
 class TicketController extends Controller
 {
@@ -13,22 +14,28 @@ class TicketController extends Controller
     {
         // 🔥 PERBAIKAN DI SINI (tickets, bukan tikets)
         $tikets = $event->tickets()->latest()->get();
+        $types = TypeTiket::all();
 
-        return view('tickets.index', compact('event', 'tikets'));
+        return view('tickets.index', compact('event', 'tikets', 'types'));
     }
 
     // Tambah tiket
     public function store(Request $request, Event $event)
     {
         $validated = $request->validate([
-            'tipe'  => 'required|string|max:255',
+            'type_tiket_id' => 'required|exists:typetiket,id',
             'harga' => 'required|numeric|min:0',
             'stok'  => 'required|integer|min:0',
         ]);
 
         $validated['event_id'] = $event->id;
 
-        Tiket::create($validated);
+        Tiket::create([
+            'event_id' => $event->id,
+            'type_tiket_id' => $request->type_tiket_id,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+        ]);
 
         return redirect()->back()->with('success', 'Tiket berhasil ditambahkan.');
     }
@@ -40,7 +47,7 @@ class TicketController extends Controller
         abort_unless($tiket->event_id === $event->id, 404);
 
         $validated = $request->validate([
-            'tipe'  => 'required|string|max:255',
+            'type_tiket_id' => 'required|exists:typetiket,id',
             'harga' => 'required|numeric|min:0',
             'stok'  => 'required|integer|min:0',
         ]);

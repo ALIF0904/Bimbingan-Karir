@@ -35,6 +35,31 @@
                 <p class="text-sm text-gray-500">
                     {{ $order->event->lokasi ?? 'Lokasi tidak tersedia' }}
                 </p>
+
+                {{-- METODE PEMBAYARAN --}}
+                <div class="mt-4 text-sm">
+                    <p class="font-semibold">Metode Pembayaran</p>
+
+                    @if($order->payment)
+                        <p>
+                            {{ $order->payment->nama }}
+                            ({{ strtoupper($order->payment->tipe) }})
+                        </p>
+
+                        @if($order->payment->nomor)
+                            <p class="text-gray-600">
+                                {{ $order->payment->nomor }}
+                                @if($order->payment->atas_nama)
+                                    a.n {{ $order->payment->atas_nama }}
+                                @endif
+                            </p>
+                        @endif
+                    @else
+                        <p class="text-red-600">
+                            Tidak ada data pembayaran
+                        </p>
+                    @endif
+                </div>
             </div>
 
             {{-- KANAN : RINGKASAN + BUTTON --}}
@@ -46,7 +71,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="font-semibold capitalize">
-                                {{ $detail->tiket->tipe }}
+                                {{ $detail->tiket->typeTiket?->tipe_tiket ?? '-' }}
                             </p>
                             <p class="text-gray-500">
                                 Qty: {{ $detail->jumlah }}
@@ -69,7 +94,7 @@
                     </div>
                 </div>
 
-                {{-- BUTTON (SEJAJAR EVENT) --}}
+                {{-- BUTTON --}}
                 <div class="flex justify-end pt-2">
                     <a href="{{ route('transactions.index') }}"
                        class="bg-indigo-600 hover:bg-indigo-700

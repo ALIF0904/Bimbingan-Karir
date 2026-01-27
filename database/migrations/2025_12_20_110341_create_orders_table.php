@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->foreignId("event_id")->constrained()->onDelete('cascade');
             $table->dateTime("order_date");
             $table->decimal('total_harga', 10, 2);
+            $table->foreignId('payment_id')->nullable()->constrained('payments');
+            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

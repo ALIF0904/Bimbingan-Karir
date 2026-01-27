@@ -19,12 +19,16 @@ class OrderSeeder extends Seeder
                 'event_id' => 1,
                 'order_date' => '2024-07-01 14:30:00',
                 'total_harga' => 1500000,
+                'payment_id' => 1,
+                'status' => 'paid',
             ],
             [
                 'user_id' => 2,
                 'event_id' => 2,
                 'order_date' => '2024-07-02 10:15:00',
                 'total_harga' => 200000,
+                'payment_id' => 2,
+                'status' => 'paid',
             ],
         ];
         $order_details = [

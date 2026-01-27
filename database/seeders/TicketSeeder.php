@@ -19,27 +19,31 @@ class TicketSeeder extends Seeder
                 'tipe' => 'premium',
                 'harga' => 1500000,
                 'stok' => 100,
+                'type_tiket_id' => 2,
             ],
             [
                 'event_id' => 1,
                 'tipe' => 'reguler',
                 'harga' => 500000,
                 'stok' => 500,
+                'type_tiket_id' => 1,
             ],
             [
                 'event_id' => 2,
                 'tipe' => 'premium',
                 'harga' => 200000,
                 'stok' => 300,
+                'type_tiket_id' => 2,
             ],
             [
                 'event_id' => 3,
                 'tipe' => 'premium',
                 'harga' => 300000,
                 'stok' => 200,
+                'type_tiket_id' => 2,
             ],
         ];
-        foreach ($tickets as $ticket) {
+        foreach ($tickets as $ticket)    {
             Tiket::create($ticket);
         }
     }

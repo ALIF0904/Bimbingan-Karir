@@ -65,6 +65,54 @@
                 </a>
             </li>
 
+            {{-- Manajemen Tipe Tiket --}}
+            <li class="{{ request()->routeIs('types.*') ? 'bg-gray-200 rounded-lg' : '' }}">
+                <a href="{{ route('types.index') }}"
+                    class="flex items-center gap-4 py-2.5 px-3
+                          is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manajemen Tipe Tiket">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+
+                    <span class="is-drawer-close:hidden text-lg">Manajemen Tipe Tiket</span>
+                </a>
+            </li>
+
+            {{-- Manajemen Pembayaran --}}
+            <li class="{{ request()->routeIs('payment.*') ? 'bg-gray-200 rounded-lg' : '' }}">
+                <a href="{{ route('payments.index') }}"
+                    class="flex items-center gap-4 py-2.5 px-3
+                          is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manajemen Pembayaran">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+
+                    <span class="is-drawer-close:hidden text-lg">Manajemen Pembayaran</span>
+                </a>
+            </li>
+
+             {{-- Manajemen Lokasi --}}
+            <li class="{{ request()->routeIs('lokasi.*') ? 'bg-gray-200 rounded-lg' : '' }}">
+                <a href="{{ route('lokasis.index') }}"
+                    class="flex items-center gap-4 py-2.5 px-3
+                          is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manajemen Lokasi">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+
+                    <span class="is-drawer-close:hidden text-lg">Manajemen Lokasi</span>
+                </a>
+            </li>
+
             {{-- History Pembelian --}}
             <li class="{{ request()->routeIs('transactions.*') ? 'bg-gray-200 rounded-lg' : '' }}">
                 <a href="{{ route('transactions.index') }}"
